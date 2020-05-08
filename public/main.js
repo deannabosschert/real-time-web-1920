@@ -101,24 +101,18 @@ function addFollower_2(followers) {
   console.log(followers)
 }
 
+function drawChart(username_1, username_2, followers_count_1, followers_count_2) {
+  const username_1_display = username_1
+  const username_2_display = username_2
 
-
-
-
-function calculateWinningUser() {
-  if (username_1.followers_count > username_2.followers_count) {
+  if (followers_count_1 > followers_count_2) {
     const username_1_color = '#1DA1F2'
     const username_2_color = '#657786'
   } else {
     const username_2_color = '#1DA1F2'
     const username_1_color = '#657786'
   }
-}
 
-
-function drawChart(username_1, username_2, followers_count_1, followers_count_2) {
-  const username_1_display = username_1
-  const username_2_display = username_2
 
   let ctx = document.getElementById("myChart")
 
