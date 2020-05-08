@@ -41,9 +41,6 @@ https://real-time-dingen.herokuapp.com/
 
 ## ✅ To-do
 
-
-![](https://github.com/deannabosschert/real-time-web-1920/blob/master/public/img/documentation/Note%2017%20Apr%202020%2012_03_50.jpg)
-
 ## 📋 Concept
 _What does your app do, what is the goal? (passing butter)_
 
