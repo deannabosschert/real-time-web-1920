@@ -1,13 +1,42 @@
 <!doctype html>
 <%- include('./partials/head.ejs') %>
 <%- include('./partials/header.ejs') %>
-<form class="searchForm">
-  <label for="username">Search for a Twitter user: </label>
-  <input type="text" name="username" class="input" autocomplete="off" autofocus />
-  <button>Send</button>
-</form>
 
-<ul class="tweets"></ul>
-
+  <main class="main">
+    <section class="main_user_1 main_user">
+      <h2 class="main_user_1_name username">
+      </h2>
+      <article class="main_user_1_feed feed">
+        <ul class="tweets1 tweets">
+          <li class="tweets_tweet"><img class="tweets_tweet_avatar" src="./img/icons/Twitter_Social_Icon_Rounded_Square_Color.png"><p class="tweets_tweet_text">...</li>
+          <li class="tweets_tweet"><img class="tweets_tweet_avatar" src="./img/icons/Twitter_Social_Icon_Rounded_Square_Color.png"><p class="tweets_tweet_text">...</li>
+          <li class="tweets_tweet"><img class="tweets_tweet_avatar" src="./img/icons/Twitter_Social_Icon_Rounded_Square_Color.png"><p class="tweets_tweet_text">...</li>
+          <li class="tweets_tweet"><img class="tweets_tweet_avatar" src="./img/icons/Twitter_Social_Icon_Rounded_Square_Color.png"><p class="tweets_tweet_text">...</li>
+        </ul>
+      </article>
+      <article class="main_user_1_options options"></article>
+    </section>
+    <section class="main_chart">
+      <h2 class="main_chart_title">Who's winning in the follower count?</h2>
+      <article class="main_chart_chartjs">
+        <canvas id="myChart" class="chart"></canvas>
+      </article>
+      <article class="main_chart_legenda"></article>
+    </section>
+    <section class="main_user_2 main_user">
+      <h2 class="main_user_2_name username"></h2>
+      <article class="main_user_2_feed feed">
+        <ul class="tweets2 tweets">
+          <li class="tweets_tweet"><img class="tweets_tweet_avatar" src="./img/icons/Twitter_Social_Icon_Rounded_Square_Color.png"><p class="tweets_tweet_text">...</li>
+          <li class="tweets_tweet"><img class="tweets_tweet_avatar" src="./img/icons/Twitter_Social_Icon_Rounded_Square_Color.png"><p class="tweets_tweet_text">...</li>
+          <li class="tweets_tweet"><img class="tweets_tweet_avatar" src="./img/icons/Twitter_Social_Icon_Rounded_Square_Color.png"><p class="tweets_tweet_text">...</li>
+          <li class="tweets_tweet"><img class="tweets_tweet_avatar" src="./img/icons/Twitter_Social_Icon_Rounded_Square_Color.png"><p class="tweets_tweet_text">...</li>
+        </ul>
+      </article>
+      <article class="main_user_2_options options"></article>
+    </section>
+  </main>
+  <footer class="footer"></footer>
+</div>
 
 <%- include('./partials/foot.ejs') %>

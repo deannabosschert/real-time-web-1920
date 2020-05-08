@@ -2,7 +2,11 @@
   "name": "RTW-chat_1",
   "version": "0.0.1",
   "description": "Dashboard showing rivaling famous Twitter users in follower-battle",
+  "main": "server.js",
   "dependencies": {
+    "chart.js": "^2.9.3",
+    "chartjs-plugin-annotation": "^0.5.7",
+    "chartjs-plugin-datalabels": "^0.7.0",
     "dotenv": "^8.2.0",
     "ejs": "^3.1.2",
     "express": "^4.17.1",
@@ -17,10 +21,13 @@
   "devDependencies": {
     "nodemon": "^2.0.3"
   },
+  "directories": {
+    "doc": ""
+  },
   "scripts": {
-    "start": "node index.js",
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js"
+    "dev": "nodemon server.js"
   },
   "bugs": {
     "url": "https://github.com/deannabosschert/real-time-web-1920/issues"
