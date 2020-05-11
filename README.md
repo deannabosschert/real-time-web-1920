@@ -142,6 +142,16 @@ Twitter API.
 ChartsJS.
 
 Na lang zoeken toch maar overstag gegaan met het gebruik van de Twitter-library.
+Uiteindelijk die ook laten varen en gebruikgemaakt van de streaming-service van Twitter om het maxen van requests tegen te gaan. Realtime-functionaliteit bied ik aan dmv direct tonen van de tweets+data op de frontend, evenals het registreren van de 'top searches' middels MongoDB.
+
+  ```
+  async function sleep(delay) {}
+  async function bearerToken(auth) {}
+  async function getAllRules(token) {}
+  async function deleteAllRules(rules, token) {}
+  async function setRules(rules, token) {}
+  function streamConnect(token) {}
+```
 
 #### Properties
 
