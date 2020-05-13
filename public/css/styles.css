@@ -65,6 +65,10 @@ p {
   text-align: left;
 }
 
+.hidden {
+  display: none;
+}
+
 .grid-container {
   display: grid;
   grid-template-columns: 1fr;
@@ -204,7 +208,7 @@ p {
 }
 
 .tweets {
-  max-height: 40vh;
+  max-height: 100%;
   background-color: var(--extra_light_grey);
   overflow: scroll;
 }
