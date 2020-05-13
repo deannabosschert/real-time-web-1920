@@ -19,9 +19,7 @@
     "twitter": "^1.7.1",
     "validator": "^13.0.0"
   },
-  "devDependencies": {
-    "nodemon": "^2.0.3"
-  },
+  "devDependencies": {},
   "directories": {
     "doc": ""
   },
