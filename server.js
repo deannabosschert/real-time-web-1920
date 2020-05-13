@@ -39,22 +39,27 @@ app.get('/', function(req, res) {
 io.on('connection', socket => {
 
   socket.on("start", function(username_1, username_2) {
-    console.log(username_1)
-    console.log(username_2)
-    twitterAPI(username_1)
+    twitterAPI(username_1, username_2)
     // if (username_2 == "empty") {
     //   getInfo_1(username_1, '', '')
-    // } else if (username_1 = "empty") {
+    // } else if (username_1 =  "empty") {
     //   getInfo_2(username_2, '', '')
     // }
 
   })
 
-  socket.on('new_tweet_1', function(tweetObject) {
+  socket.on('new_tweet', function(tweetObject) {
     console.log('yeeeeeet')
     console.log(tweetObject)
-    socket.broadcast.emit('new_tweet_1', tweetObject)
+    socket.broadcast.emit('new_tweet', tweetObject)
   })
+
+  socket.on('disconnect', function() {
+    console.log('user has left the building')
+    stream.emit('timeout')
+  })
+
+
 
   // socket.on('new_follower_1', function(username_1, followers) {
   //   socket.broadcast.emit('new_follower_1', username_1, followers)
@@ -200,11 +205,10 @@ function twitterAPI(username_1, username_2) {
         const json = JSON.parse(data)
         console.log(json)
 
-        io.emit("new_tweet_1", json)
-
-
         if (json.connection_issue) {
           stream.emit('timeout')
+        } else {
+          io.emit("new_tweet", json)
         }
       } catch (e) {
         // Heartbeat received. Do nothing.
@@ -220,15 +224,42 @@ function twitterAPI(username_1, username_2) {
   }
 
   (async () => {
+    // declare variables
     let token, currentRules, stream
     let timeout = 0
-    const rules = [{
-      'value': `from:${username_1}`,
-      'tag': username_1
-    }, {
-      'value': `from:${username_2}`,
-      'tag': username_2
-    }, ]
+    console.log(username_1)
+    console.log(username_2)
+    const rules = setQuery(username_1, username_2)
+    console.log(rules)
+
+    function setQuery(username_1, username_2) {
+      if (username_2 == "User 2") {
+        console.log("user 1 is ingevuld, user 2 niet")
+        const rules = [{
+          'value': `from:${username_1}`,
+          'tag': `User_1: ${username_1}`
+        }, ]
+        return rules
+      } else if (username_1 == "User 1") {
+        console.log("user 2 is ingevuld, user 1 niet")
+        const rules = [{
+          'value': `from:${username_2}`,
+          'tag': `User_2: ${username_2}`
+        }, ]
+        return rules
+      } else {
+        console.log("beide zijn ingevuld")
+        const rules = [{
+          'value': `from:${username_1}`,
+          'tag': `User_1: ${username_1}`
+        }, {
+          'value': `from:${username_2}`,
+          'tag': `User_2: ${username_2}`
+
+        }, ]
+        return rules
+      }
+    }
 
     try {
       // Exchange your credentials for a Bearer token
@@ -270,125 +301,134 @@ function twitterAPI(username_1, username_2) {
           await sleep((2 ** timeout) * 1000)
           connect()
         })
+
+        stream.on('user_left', function() {
+          console.log('user has left, closing connnection now')
+          stream.abort()
+        })
+
       } catch (e) {
         connect()
       }
     }
-
+    // misschien ook een stream.on('nieuwe tweets ophalen.. ,?')
+    // first call for connection
     connect()
   })()
 }
 
-//
-// function getInfo_1(username_1, latest_tweetObject) {
-//   const filterOptions = {
-//     screen_name: username_1,
-//     count: 1
-//   }
-//
-//   const getData = new Promise((resolve) => {
-//     twitterClient.get('statuses/user_timeline', filterOptions, function(err, data) {
-//       const tweets = data.map(item => ({
-//         text: item.text,
-//         user_name: item.user.name,
-//         user_screen_name: item.user.screen_name,
-//         followers: item.user.followers_count
-//       }))
-//       const tweetObject = tweets[0]
-//       resolve(tweetObject)
-//     })
-//   })
-//
-//   getData
-//     .then(tweetObject => {
-//       checkText_1(username_1, tweetObject, latest_tweetObject)
-//     })
-//     .catch(err => {
-//       console.log(err)
-//     })
-// }
-//
-// function checkText_1(username_1, tweetObject, latest_tweetObject) {
-//   const tweetText = tweetObject.text
-//   const latest_tweetText = latest_tweetObject.text
-//
-//   if (tweetText == latest_tweetText) {
-//     console.log('same old')
-//     refreshTweet_1(username_1, tweetObject)
-//   } else {
-//     console.log('sunshine and rainbows: new tweet!')
-//     io.emit("new_tweet_1", username_1, tweetObject)
-//   }
-// }
-//
-// function checkFollowers_1(username_1, followers, latest_followers) {
-//   if (followers == latest_followers) {
-//     console.log('same old fam')
-//     refreshTweet_1(username_1, followers)
-//   } else {
-//     console.log('new follower count!')
-//     io.emit("new_tweet_1", username_1, followers)
-//   }
-// }
-//
-// function refreshTweet_1(username_1, tweetObject, latest_tweet_text) {
-//   getInfo_1(username_1, tweetObject, latest_tweet_text)
-// }
-//
-// function getInfo_2(username_2, latest_tweetObject) {
-//   const filterOptions = {
-//     screen_name: username_2,
-//     count: 1
-//   }
-//
-//   const getData = new Promise((resolve) => {
-//     twitterClient.get('statuses/user_timeline', filterOptions, function(err, data) {
-//       const tweets = data.map(item => ({
-//         text: item.text,
-//         user_name: item.user.name,
-//         user_screen_name: item.user.screen_name,
-//         followers: item.user.followers_count
-//       }))
-//       const tweetObject = tweets[0]
-//       resolve(tweetObject)
-//     })
-//   })
-//
-//   getData
-//     .then(tweetObject => {
-//       checkText_2(username_2, tweetObject, latest_tweetObject)
-//     })
-//     .catch(err => {
-//       console.log(err)
-//     })
-// }
-//
-// function checkText_2(username_2, tweetObject, latest_tweetObject) {
-//   const tweetText = tweetObject.text
-//   const latest_tweetText = latest_tweetObject.text
-//
-//   if (tweetText == latest_tweetText) {
-//     console.log('same old')
-//     refreshTweet_2(username_2, tweetObject)
-//   } else {
-//     console.log('sunshine and rainbows: new tweet!')
-//     io.emit("new_tweet_2", username_2, tweetObject)
-//   }
-// }
-//
-// function checkFollowers_2(username_2, followers, latest_followers) {
-//   if (followers == latest_followers) {
-//     console.log('same old fam')
-//     refreshTweet_2(username_2, followers)
-//   } else {
-//     console.log('new follower count!')
-//     io.emit("new_tweet_2", username_2, followers)
-//   }
-// }
-//
-// function refreshTweet_2(username_2, tweetObject, latest_tweet_text) {
-//   getInfo_2(username_2, tweetObject, latest_tweet_text)
-// }
-http.listen(port, () => {
-  console.log('App listening on: ' + port)
-})
+// function collapseStuff() {
+
+function getInfo_1(username_1, latest_tweetObject) {
+  const filterOptions = {
+    screen_name: username_1,
+    count: 1
+  }
+
+  const getData = new Promise((resolve) => {
+    twitterClient.get('statuses/user_timeline', filterOptions, function(err, data) {
+      const tweets = data.map(item => ({
+        text: item.text,
+        user_name: item.user.name,
+        user_screen_name: item.user.screen_name,
+        followers: item.user.followers_count
+      }))
+      const tweetObject = tweets[0]
+      resolve(tweetObject)
+    })
+  })
+
+  getData
+    .then(tweetObject => {
+      checkText_1(username_1, tweetObject, latest_tweetObject)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+}
+
+function checkText_1(username_1, tweetObject, latest_tweetObject) {
+  const tweetText = tweetObject.text
+  const latest_tweetText = latest_tweetObject.text
+
+  if (tweetText == latest_tweetText) {
+    console.log('same old')
+    refreshTweet_1(username_1, tweetObject)
+  } else {
+    console.log('sunshine and rainbows: new tweet!')
+    io.emit("new_tweet", username_1, tweetObject)
+  }
+}
+
+function checkFollowers_1(username_1, followers, latest_followers) {
+  if (followers == latest_followers) {
+    console.log('same old fam')
+    refreshTweet_1(username_1, followers)
+  } else {
+    console.log('new follower count!')
+    io.emit("new_tweet", username_1, followers)
+  }
+}
+
+function refreshTweet_1(username_1, tweetObject, latest_tweet_text) {
+  getInfo_1(username_1, tweetObject, latest_tweet_text)
+}
+
+function getInfo_2(username_2, latest_tweetObject) {
+  const filterOptions = {
+    screen_name: username_2,
+    count: 1
+  }
+
+  const getData = new Promise((resolve) => {
+    twitterClient.get('statuses/user_timeline', filterOptions, function(err, data) {
+      const tweets = data.map(item => ({
+        text: item.text,
+        user_name: item.user.name,
+        user_screen_name: item.user.screen_name,
+        followers: item.user.followers_count
+      }))
+      const tweetObject = tweets[0]
+      resolve(tweetObject)
+    })
+  })
+
+  getData
+    .then(tweetObject => {
+      checkText_2(username_2, tweetObject, latest_tweetObject)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+}
+
+function checkText_2(username_2, tweetObject, latest_tweetObject) {
+  const tweetText = tweetObject.text
+  const latest_tweetText = latest_tweetObject.text
+
+  if (tweetText == latest_tweetText) {
+    console.log('same old')
+    refreshTweet_2(username_2, tweetObject)
+  } else {
+    console.log('sunshine and rainbows: new tweet!')
+    io.emit("new_tweet_2", username_2, tweetObject)
+  }
+}
+
+function checkFollowers_2(username_2, followers, latest_followers) {
+  if (followers == latest_followers) {
+    console.log('same old fam')
+    refreshTweet_2(username_2, followers)
+  } else {
+    console.log('new follower count!')
+    io.emit("new_tweet_2", username_2, followers)
+  }
+}
+
+function refreshTweet_2(username_2, tweetObject, latest_tweet_text) {
+  getInfo_2(username_2, tweetObject, latest_tweet_text)
+  // }}
+
+  http.listen(port, () => {
+    console.log('App listening on: ' + port)
+  })
