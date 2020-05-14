@@ -21,11 +21,16 @@ const dbName = process.env.DB_NAME
 const consumer_key = process.env.TWITTER_API_KEY
 const consumer_secret = process.env.TWITTER_API_SECRET_KEY
 
+const options = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}
+
 const bearerTokenURL = new URL('https://api.twitter.com/oauth2/token')
 const streamURL = new URL('https://api.twitter.com/labs/1/tweets/stream/filter')
 const rulesURL = new URL('https://api.twitter.com/labs/1/tweets/stream/filter/rules')
 
-const token = generateToken()
+// const token = generateToken()
 
 app.use(express.static('./public'))
 app.set('view engine', 'ejs')
@@ -41,10 +46,12 @@ io.on('connection', socket => {
     defineRules("start", rules)
   })
 
-  socket.on("newSearch", function(username_1, username_2) {
-    const rules = setQuery('username_1', 'username_2')
+  socket.on("newSearch", async function(username_1, username_2) {
+    const rules = await setQuery('username_1', 'username_2')
     // stuur search naar mongodb database voor popular search-log
+    const search = await defineSearchLog(username_1, username_2)
     defineRules("update", rules)
+    addSearch(search)
   })
 
   socket.on('new_tweet', function(tweetObject) {
@@ -56,24 +63,11 @@ io.on('connection', socket => {
 
   socket.on('disconnect', function() {
     console.log('user has left the building')
-    stream.emit('user_left')
+    // stream.emit('user_left')
   })
 
 })
 
-function generateToken() {
-  try {
-    // Exchange your credentials for a Bearer token
-    token = await bearerToken({
-      consumer_key,
-      consumer_secret
-    })
-    return token
-  } catch (e) {
-    console.error(`Could not generate a Bearer token. Please check that your credentials are correct and that the Filtered Stream preview is enabled in your Labs dashboard. (${e})`)
-    process.exit(-1)
-  }
-}
 
 function setQuery(username_1, username_2) {
   if (username_2 == "User 2") {
@@ -104,17 +98,48 @@ function setQuery(username_1, username_2) {
   }
 }
 
+function defineSearchLog(username_1, username_2) {
+  if (username_1 == "User 1") {
+    const search = {
+      "username_2": username_2
+    }
+    return search
+  } else if (username_2 == "User 2") {
+    const search = {
+      "username_1": username_1
+    }
+    return search
+  } else {
+    const search = {
+      "username_1": username_1,
+      "username_2": username_2
+    }
+    return search
+  }
+}
+
 async function defineRules(state, rules) {
+  try {
+    // Exchange your credentials for a Bearer token
+    token = await bearerToken({
+      consumer_key,
+      consumer_secret
+    })
+  } catch (e) {
+    console.error(`Could not generate a Bearer token. Please check that your credentials are correct and that the Filtered Stream preview is enabled in your Labs dashboard. (${e})`)
+    process.exit(-1)
+  }
+
   if (state == "start") {
     try {
       // Gets the complete list of rules currently applied to the stream
-      currentRules = await getAllRules(token)
+      // currentRules = await getAllRules(token)
 
       // // Delete all rules. Comment this line if you want to keep your existing rules.
-      await deleteAllRules(currentRules, token)
+      // await deleteAllRules(currentRules, token)
 
       // // Add rules to the stream. Comment this line if you want to keep your existing rules.
-      await setRules(rules, token)
+      // await setRules(rules, token)
       console.log("checkpoint1")
       console.log(token)
       console.log("kreeg ik een token?")
@@ -307,7 +332,7 @@ function streamConnect(token) {
 }
 
 function followerConnect(token) {
-
+  console.log('fwc' + token)
 }
 
 async function sleep(delay) {
@@ -316,113 +341,16 @@ async function sleep(delay) {
       resolve(true), delay))
 }
 
-//
-// function getInfo_1(username_1, latest_tweetObject) {
-//   const filterOptions = {
-//     screen_name: username_1,
-//     count: 1
-//   }
-//
-//   const getData = new Promise((resolve) => {
-//     twitterClient.get('statuses/user_timeline', filterOptions, function(err, data) {
-//       const tweets = data.map(item => ({
-//         text: item.text,
-//         user_name: item.user.name,
-//         user_screen_name: item.user.screen_name,
-//         followers: item.user.followers_count
-//       }))
-//       const tweetObject = tweets[0]
-//       resolve(tweetObject)
-//     })
-//   })
-//
-//   getData
-//     .then(tweetObject => {
-//       checkText_1(username_1, tweetObject, latest_tweetObject)
-//     })
-//     .catch(err => {
-//       console.log(err)
-//     })
-// }
-//
-// function checkText_1(username_1, tweetObject, latest_tweetObject) {
-//   const tweetText = tweetObject.text
-//   const latest_tweetText = latest_tweetObject.text
-//
-//   if (tweetText == latest_tweetText) {
-//     console.log('same old')
-//     refreshTweet_1(username_1, tweetObject)
-//   } else {
-//     console.log('sunshine and rainbows: new tweet!')
-//     io.emit("new_tweet", username_1, tweetObject)
-//   }
-// }
-//
-// function checkFollowers_1(username_1, followers, latest_followers) {
-//   if (followers == latest_followers) {
-//     console.log('same old fam')
-//     refreshTweet_1(username_1, followers)
-//   } else {
-//     console.log('new follower count!')
-//     io.emit("new_tweet", username_1, followers)
-//   }
-// }
-//
-// function refreshTweet_1(username_1, tweetObject, latest_tweet_text) {
-//   getInfo_1(username_1, tweetObject, latest_tweet_text)
-// }
-//
-// function getInfo_2(username_2, latest_tweetObject) {
-//   const filterOptions = {
-//     screen_name: username_2,
-//     count: 1
-//   }
-//
-//   const getData = new Promise((resolve) => {
-//     twitterClient.get('statuses/user_timeline', filterOptions, function(err, data) {
-//       const tweets = data.map(item => ({
-//         text: item.text,
-//         user_name: item.user.name,
-//         user_screen_name: item.user.screen_name,
-//         followers: item.user.followers_count
-//       }))
-//       const tweetObject = tweets[0]
-//       resolve(tweetObject)
-//     })
-//   })
-//
-//   getData
-//     .then(tweetObject => {
-//       checkText_2(username_2, tweetObject, latest_tweetObject)
-//     })
-//     .catch(err => {
-//       console.log(err)
-//     })
-// }
-//
-// function checkText_2(username_2, tweetObject, latest_tweetObject) {
-//   const tweetText = tweetObject.text
-//   const latest_tweetText = latest_tweetObject.text
-//
-//   if (tweetText == latest_tweetText) {
-//     console.log('same old')
-//     refreshTweet_2(username_2, tweetObject)
-//   } else {
-//     console.log('sunshine and rainbows: new tweet!')
-//     io.emit("new_tweet_2", username_2, tweetObject)
-//   }
-// }
-//
-// function checkFollowers_2(username_2, followers, latest_followers) {
-//   if (followers == latest_followers) {
-//     console.log('same old fam')
-//     refreshTweet_2(username_2, followers)
-//   } else {
-//     console.log('new follower count!')
-//     io.emit("new_tweet_2", username_2, followers)
-//   }
-// }
-
+async function addSearch(search) {
+  console.log(search)
+  const client = await MongoClient.connect(url, options)
+  const db = client.db(dbName)
+  console.log("Connected correctly to server")
+  const item = await db.collection('chat_quote_list').insertOne(search)
+  console.log('big data at your service')
+  client.close()
+  return
+}
 
 
 http.listen(port, () => {
