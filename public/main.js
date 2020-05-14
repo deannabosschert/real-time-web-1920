@@ -1,43 +1,54 @@
 const socket = io()
-const tweets_1 = document.querySelector(".tweets_1")
-const searchBar_1 = document.querySelector(".header_nav_searchBar_1")
+// const abort_stream = document.querySelector(".abort_stream")
 const input1 = document.querySelector(".header_nav_searchBar_1_textInput")
-const tweets_2 = document.querySelector(".tweets_2")
-const searchBar_2 = document.querySelector(".header_nav_searchBar_2")
 const input2 = document.querySelector(".header_nav_searchBar_2_textInput")
+const tweets_1 = document.querySelector(".tweets_1")
+const tweets_2 = document.querySelector(".tweets_2")
+const searchBar_1 = document.querySelector(".header_nav_searchBar_1")
+const searchBar_2 = document.querySelector(".header_nav_searchBar_2")
 const username_1_field = document.querySelector(".main_user_1_name")
 const username_2_field = document.querySelector(".main_user_2_name")
 const username_1followers_count = 20;
 const username_2followers_count = 300;
+const username_1_hidden = document.querySelector(".username_1_hidden")
+const username_2_hidden = document.querySelector(".username_2_hidden")
+username_1_hidden.innerHTML = "User 1"
+username_2_hidden.innerHTML = "alldayoptimism"
 
-drawChart("Twitter user 1", "Twitter user 2", 0, 0)
+drawChart(username_1_hidden.innerHTML, username_2_hidden.innerHTML, 0, 0)
+
+// abort_stream.addEventListener("click", function(event) {
+//   socket.emit("disconnection")
+// })
+socket.emit("start")
 
 
 searchBar_1.addEventListener("submit", function(event) {
-  event.preventDefault()
   // when searching for another username, delete the results of the previous search
   while (tweets_1.firstChild) {
     tweets_1.removeChild(tweets_1.firstChild);
   }
   const username_1 = input1.value
-  const username_2 = username_2_field
-  socket.emit("start", username_1, username_2)
-  input1.value = ""
+  const username_2 = username_2_hidden.innerHTML
+
+  socket.emit("newSearch", username_1, username_2)
+  // input1.value = ""
   return false
 }, false)
 
-// searchBar_2.addEventListener("submit", function(event) {
-//   event.preventDefault()
-//   // when searching for another username, delete the results of the previous search
-//   while (tweets_1.firstChild) {
-//     tweets_1.removeChild(tweets_1.firstChild);
-//   }
-//   const username_1 = input1.value
-//   const username_2 = 'jeffreestar'
-//   socket.emit("start", username_1, username_2)
-//   input1.value = ""
-//   return false
-// }, false)
+searchBar_2.addEventListener("submit", function(event) {
+  // when searching for another username, delete the results of the previous search
+  while (tweets_2.firstChild) {
+    tweets_2.removeChild(tweets_2.firstChild);
+  }
+
+  const username_2 = input2.value
+  const username_1 = username_1_hidden.innerHTML
+
+  socket.emit("newSearch", username_1, username_2)
+  // input2.value = ""
+  return false
+}, false)
 // //
 // searchBar_2.addEventListener("submit", function(event) {
 //   event.preventDefault()
@@ -52,8 +63,20 @@ searchBar_1.addEventListener("submit", function(event) {
 //   return false
 // }, false)
 //
-socket.on("new_tweet_1", function(tweetObject) {
-  addTweet_1(tweetObject)
+socket.on("new_tweet", function(tweetObject) {
+  console.log("maintweetnew")
+  console.log(tweetObject)
+  // if (tweetObject.connection_issue = "TooManyConnections") {
+  //   const errorDetail = tweetObject.detail
+  //   showError(errorDetail)
+  // } else {
+  const username_tag = tweetObject.matching_rules[0].tag
+  const user = username_tag.charAt(5)
+  console.log(user)
+  addTweet(user, tweetObject)
+  // }
+  // const whichUser = checkUser(json)
+  // addTweet_1(tweetObject)
 })
 //
 // socket.on("new_followers_1", function(username_1, followers) {
@@ -61,23 +84,31 @@ socket.on("new_tweet_1", function(tweetObject) {
 //   socket.emit("refresh_tweet_1", username_1, tweetObject)
 // })
 //
-function addTweet_1(tweetObject) {
+
+function showError(errorDetail) {
+  const li = document.createElement("li")
+  li.innerHTML = errorDetail
+  tweets_1.appendChild(li)
+  window.scrollTo(0, tweets_1.scrollHeight)
+}
+
+function addTweet(user, tweetObject) {
+  console.log(user)
   console.log(tweetObject)
-  const tweetText_1 = tweetObject.data.text
-  const username_1 = tweetObject.matching_rules[0].tag
-  const username_1_display = tweetObject.includes.users[0].name)
+  const tweetText = tweetObject.data.text
+  const username_tag = tweetObject.matching_rules[0].tag
+  const username_display = tweetObject.includes.users[0].name
+  const username = username_1_tag.split(' ');
+  // tweetObject.json.matching_rules[0].tag
+  // const followers_1 = tweetObject.followers
+  `username_${user}_field`.innerHTML = username_display `username_${user}_hidden`.innerHTML = username[1]
 
-// tweetObject.json.matching_rules[0].tag
-// const followers_1 = tweetObject.followers
-username_1_field.innerHTML = username_1_display
-
-
-const li = document.createElement("li")
-li.innerHTML = tweetText_1
-tweets_1.appendChild(li)
-// window.scrollTo(tweet)
-window.scrollTo(0, tweets_1.scrollHeight)
-// drawChart(username_1_display, "User 2", followers_1, "")
+  const li = document.createElement("li")
+  li.innerHTML = `tweetText_${user}`
+  `tweets_${user}`.appendChild(li)
+  // window.scrollTo(tweet)
+  window.scrollTo(0, `tweets_${user}`.scrollHeight)
+  // drawChart(username_1_display, "User 2", followers_1, "")
 }
 //
 // function addFollower_1(followers) {
