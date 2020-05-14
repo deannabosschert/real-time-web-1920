@@ -1,5 +1,4 @@
 const socket = io()
-// const abort_stream = document.querySelector(".abort_stream")
 const input1 = document.querySelector(".header_nav_searchBar_1_textInput")
 const input2 = document.querySelector(".header_nav_searchBar_2_textInput")
 const tweets_1 = document.querySelector(".tweets_1")
@@ -13,13 +12,10 @@ const username_2followers_count = 300;
 const username_1_hidden = document.querySelector(".username_1_hidden")
 const username_2_hidden = document.querySelector(".username_2_hidden")
 username_1_hidden.innerHTML = "User 1"
-username_2_hidden.innerHTML = "alldayoptimism"
+username_2_hidden.innerHTML = "User 2"
 
 drawChart(username_1_hidden.innerHTML, username_2_hidden.innerHTML, 0, 0)
 
-// abort_stream.addEventListener("click", function(event) {
-//   socket.emit("disconnection")
-// })
 socket.emit("start")
 
 
@@ -30,6 +26,8 @@ searchBar_1.addEventListener("submit", function(event) {
   }
   const username_1 = input1.value
   const username_2 = username_2_hidden.innerHTML
+  username_1_hidden.innerHTML = username_1
+
 
   socket.emit("newSearch", username_1, username_2)
   // input1.value = ""
@@ -44,11 +42,13 @@ searchBar_2.addEventListener("submit", function(event) {
 
   const username_2 = input2.value
   const username_1 = username_1_hidden.innerHTML
+  username_2_hidden.innerHTML = username_2
 
   socket.emit("newSearch", username_1, username_2)
   // input2.value = ""
   return false
 }, false)
+
 // //
 // searchBar_2.addEventListener("submit", function(event) {
 //   event.preventDefault()
@@ -63,6 +63,17 @@ searchBar_2.addEventListener("submit", function(event) {
 //   return false
 // }, false)
 //
+
+socket.on("conn_issue", function(json) {
+  // if (tweetObject.connection_issue = "TooManyConnections") {
+  const errorDetail = json.detail
+  showError(errorDetail)
+  // } else {
+  // }
+  // const whichUser = checkUser(json)
+  // addTweet_1(tweetObject)
+})
+
 socket.on("new_tweet", function(tweetObject) {
   console.log("maintweetnew")
   console.log(tweetObject)
@@ -74,6 +85,7 @@ socket.on("new_tweet", function(tweetObject) {
   const user = username_tag.charAt(5)
   console.log(user)
   addTweet(user, tweetObject)
+
   // }
   // const whichUser = checkUser(json)
   // addTweet_1(tweetObject)
@@ -89,6 +101,8 @@ function showError(errorDetail) {
   const li = document.createElement("li")
   li.innerHTML = errorDetail
   tweets_1.appendChild(li)
+  tweets_2.appendChild(li)
+  window.scrollTo(0, tweets_1.scrollHeight)
   window.scrollTo(0, tweets_1.scrollHeight)
 }
 
