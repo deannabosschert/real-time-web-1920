@@ -14,12 +14,14 @@ const username_2_hidden = document.querySelector(".username_2_hidden")
 username_1_hidden.innerHTML = "User 1"
 username_2_hidden.innerHTML = "User 2"
 
+socket.emit("start")
+
 drawChart(username_1_hidden.innerHTML, username_2_hidden.innerHTML, 0, 0)
 
-socket.emit("start")
 
 
 searchBar_1.addEventListener("submit", function(event) {
+  event.preventDefault()
   // when searching for another username, delete the results of the previous search
   while (tweets_1.firstChild) {
     tweets_1.removeChild(tweets_1.firstChild);
@@ -35,6 +37,7 @@ searchBar_1.addEventListener("submit", function(event) {
 }, false)
 
 searchBar_2.addEventListener("submit", function(event) {
+  event.preventDefault()
   // when searching for another username, delete the results of the previous search
   while (tweets_2.firstChild) {
     tweets_2.removeChild(tweets_2.firstChild);
@@ -75,6 +78,8 @@ socket.on("conn_issue", function(json) {
 })
 
 socket.on("new_tweet", function(tweetObject) {
+  // `username_${user}_field`.innerHTML = username_display `username_${user}_hidden`.innerHTML = username[1]
+
   console.log("maintweetnew")
   console.log(tweetObject)
   // if (tweetObject.connection_issue = "TooManyConnections") {
@@ -115,8 +120,6 @@ function addTweet(user, tweetObject) {
   const username = username_1_tag.split(' ');
   // tweetObject.json.matching_rules[0].tag
   // const followers_1 = tweetObject.followers
-  `username_${user}_field`.innerHTML = username_display `username_${user}_hidden`.innerHTML = username[1]
-
   const li = document.createElement("li")
   li.innerHTML = `tweetText_${user}`
   `tweets_${user}`.appendChild(li)
