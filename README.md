@@ -40,6 +40,10 @@ https://real-time-dingen.herokuapp.com/
 </details>
 
 ## ✅ To-do
+- [ ] update readme
+- [ ]mirror code to dlc
+
+## ✅ To-do
 
 ## 📋 Concept
 _What does your app do, what is the goal? (passing butter)_
@@ -60,6 +64,8 @@ https://www.youtube.com/watch?v=vbIOdmxMM3o
 
 ### Twitter fights
 Compare the follower count of two rivaling twitter accounts over time, and see which one is winning in popularity.
+
+![data life cycle](https://github.com/deannabosschert/real-time-web-1920/blob/master/public/img/documentation/data-life-cycle.png)
 
 ## 👯🏿‍ Features (+ wishlist)
 _What would you like to add (feature wishlist / backlog)?_
