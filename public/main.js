@@ -104,7 +104,6 @@ socket.on("new_tweet", function(tweetObject) {
 })
 
 socket.on("recent_search", function(search) {
-  console.log(search)
   showSearches(search)
   socket.emit("popular_searches")
   // }
@@ -150,8 +149,9 @@ function addTweet(user, tweetObject) {
 }
 
 function showSearches(data) {
+  const searchShow = `${data},  `
   const li = document.createElement("li")
-  li.innerHTML = data
+  li.innerHTML = searchShow
   popular_searches.appendChild(li)
   window.scrollTo(0, popular_searches.scrollHeight)
 }

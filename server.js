@@ -352,7 +352,8 @@ async function getSearches() {
     }
   }]).toArray()
   client.close()
-  io.emit("recent_search", search[0].username)
+  console.log(search)
+  // io.emit("recent_search", search[0].username)
 }
 
 http.listen(port, () => {
