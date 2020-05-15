@@ -2,27 +2,24 @@
 # Twitter Feuds
 
 https://real-time-dingen.herokuapp.com/
-[screenshot of website]
+![screenshot of website](https://github.com/deannabosschert/real-time-web-1920/blob/master/public/img/documentation/screenshot.png)
 
 
 <details>
   <summary><strong>Table of Contents</strong> (click to expand)</summary>
 
 <!-- toc -->
-
 - [✅ To-do](#--to-do)
 - [📋 Concept](#---concept)
+  * [Twitter fights](#twitter-fights)
+- [Data Life Cycle](#data-life-cycle)
 - [👯🏿‍ Features (+ wishlist)](#------features----wishlist-)
 - [⚙️ Installation](#---installation)
     + [Dependencies](#dependencies)
-- [🧑🏼‍ Data Life Cycle](#------data-life-cycle)
-- [🌍 Design patterns](#---design-patterns)
 - [👍🏽 Best practices](#-----best-practices)
 - [🗃 Data](#---data)
   * [🐒 API](#---api)
-    + [Properties](#properties)
     + [Rate limiting](#rate-limiting)
-  * [💽 Data cleaning](#---data-cleaning)
 - [🏫 Assignment](#---assignment)
   * [Learning goals](#learning-goals)
   * [Week 1 - Hello Server 📤](#week-1---hello-server---)
@@ -31,7 +28,6 @@ https://real-time-dingen.herokuapp.com/
   * [Rubric](#rubric)
 - [ℹ️ Resources](#---resources)
   * [Credits](#credits)
-  * [Small inspiration sources](#small-inspiration-sources)
 - [🗺️ License](#----license)
 
 <!-- tocstop -->
@@ -40,7 +36,7 @@ https://real-time-dingen.herokuapp.com/
 
 ## ✅ To-do
 - [ ] Wait another month for stream limit to reset..
-- Add get-request to follower count, alongside streaming-get
+- [ ] Add get-request to follower count, alongside streaming-get
 
 ## 📋 Concept
 _What does your app do, what is the goal? (passing butter)_
