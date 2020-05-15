@@ -15,8 +15,7 @@ https://real-time-dingen.herokuapp.com/
 - [👯🏿‍ Features (+ wishlist)](#------features----wishlist-)
 - [⚙️ Installation](#---installation)
     + [Dependencies](#dependencies)
-- [🧑🏼‍ Actor Diagram](#------actor-diagram)
-- [↔️ Interaction diagram](#---interaction-diagram)
+- [🧑🏼‍ Data Life Cycle](#------data-life-cycle)
 - [🌍 Design patterns](#---design-patterns)
 - [👍🏽 Best practices](#-----best-practices)
 - [🗃 Data](#---data)
@@ -40,39 +39,22 @@ https://real-time-dingen.herokuapp.com/
 </details>
 
 ## ✅ To-do
-- [ ] update readme
-- [ ]mirror code to dlc
-
-## ✅ To-do
+- [ ] Wait another month for stream limit to reset..
+- Add get-request to follower count, alongside streaming-get
 
 ## 📋 Concept
 _What does your app do, what is the goal? (passing butter)_
 
-### Chatroom with unique feature (ideas)
-**Chatbot**
-- Users can add quotes to a quotelist, then request a random one via the `quote`-command.
-- Chatbot responds with quotes when specific words are used (kinda like _Slackbot_-responses)
-
-![chat app prototype](https://media.giphy.com/media/QuJG5wnmbXoTkvJnvC/giphy.gif)
-https://www.youtube.com/watch?v=vbIOdmxMM3o
-
-**Multiple contributors**
-- Users can add things to household shopping list
-
-**Effects**
-- Trigger on-screen effects when a specific word is used (for example: `fireworks`)
-
 ### Twitter fights
 Compare the follower count of two rivaling twitter accounts over time, and see which one is winning in popularity.
 
-![data life cycle](https://github.com/deannabosschert/real-time-web-1920/blob/master/public/img/documentation/data-life-cycle.png)
+## Data Life Cycle
+![data life cycle](https://github.com/deannabosschert/real-time-web-1920/blob/master/public/img/documentation/dlc_complete-01.png)
 
 ## 👯🏿‍ Features (+ wishlist)
 _What would you like to add (feature wishlist / backlog)?_
 
-- [x] one thing
-- [ ] second something
-- [ ] third thing
+- [ ] Line chart instead of bar chart
 
 ## ⚙️ Installation
 Clone this repository to your own device:
@@ -92,32 +74,19 @@ npm install
 
 #### Dependencies
 ```json
-{
-  "name": "my-package",
-  "version": "1.0.0",
-  "scripts": {
-    "iets": "iets"
+  "dependencies": {
+    "chart.js": "^2.9.3",
+    "chartjs-plugin-annotation": "^0.5.7",
+    "chartjs-plugin-datalabels": "^0.7.0",
+    "dotenv": "^8.2.0",
+    "ejs": "^3.1.2",
+    "express": "^4.17.1",
+    "heroku": "^7.39.5",
+    "mongodb": "^3.5.6",
+    "socket.io": "^2.3.0",
+    "twitter": "^1.7.1",
   },
-  "devDependencies": {
-    "iets": "*"
-  }
-}
 ```
-
-
-## 🧑🏼‍ Actor Diagram
-_Which actors are there in your application? (actor diagram)_
-![actor diagram](https://github.com/deannabosschert/real-time-web-1920/blob/master/src/img/actordiagram.png)
-
-## ↔️ Interaction diagram
-_How does flowed interaction through the application? (interaction diagram)_
-![interaction diagram](https://github.com/deannabosschert/real-time-web-1920/blob/master/src/img/interactiondiagram.png)
-
-## 🌍 Design patterns
-
-- opsomming
-- van
-- patterns
 
 ## 👍🏽 Best practices
 
@@ -150,6 +119,8 @@ ChartsJS.
 Na lang zoeken toch maar overstag gegaan met het gebruik van de Twitter-library.
 Uiteindelijk die ook laten varen en gebruikgemaakt van de streaming-service van Twitter om het maxen van requests tegen te gaan. Realtime-functionaliteit bied ik aan dmv direct tonen van de tweets+data op de frontend, evenals het registreren van de 'top searches' middels MongoDB.
 
+See data life cycle.
+
   ```
   async function sleep(delay) {}
   async function bearerToken(auth) {}
@@ -159,19 +130,10 @@ Uiteindelijk die ook laten varen en gebruikgemaakt van de streaming-service van 
   function streamConnect(token) {}
 ```
 
-#### Properties
 
 #### Rate limiting
+Apparently, you can only do up to an undefined (and they won't state the exact amount) number of calls to the twitter-streaming api.
 
-### 💽 Data cleaning
-_What has been done with the fetched data?_What has been done with the initial data? Cleaning pattern?
-
-```js
-```
-
-outcome:
-```json
-```
 
 ## 🏫 Assignment
 <details>
@@ -212,10 +174,6 @@ Goal: Handle data sharing and multi-user support
 
 - Our superamazingteachers at the [minor WebDev @CMD](https://github.com/cmda-minor-web/)
 
-### Small inspiration sources
-
-- one source
-- second source
 
 ## 🗺️ License
 
