@@ -1,5 +1,4 @@
 const socket = io()
-// const abort_stream = document.querySelector(".abort_stream")
 const input1 = document.querySelector(".header_nav_searchBar_1_textInput")
 const input2 = document.querySelector(".header_nav_searchBar_2_textInput")
 const tweets_1 = document.querySelector(".tweets_1")
@@ -12,24 +11,26 @@ const username_1followers_count = 20;
 const username_2followers_count = 300;
 const username_1_hidden = document.querySelector(".username_1_hidden")
 const username_2_hidden = document.querySelector(".username_2_hidden")
+const popular_searches = document.querySelector(".popular_searches")
 username_1_hidden.innerHTML = "User 1"
-username_2_hidden.innerHTML = "alldayoptimism"
+username_2_hidden.innerHTML = "User 2"
+
+socket.emit("start")
 
 drawChart(username_1_hidden.innerHTML, username_2_hidden.innerHTML, 0, 0)
 
-// abort_stream.addEventListener("click", function(event) {
-//   socket.emit("disconnection")
-// })
-socket.emit("start")
 
 
 searchBar_1.addEventListener("submit", function(event) {
+  event.preventDefault()
   // when searching for another username, delete the results of the previous search
   while (tweets_1.firstChild) {
     tweets_1.removeChild(tweets_1.firstChild);
   }
   const username_1 = input1.value
   const username_2 = username_2_hidden.innerHTML
+  username_1_hidden.innerHTML = username_1
+
 
   socket.emit("newSearch", username_1, username_2)
   // input1.value = ""
@@ -37,6 +38,7 @@ searchBar_1.addEventListener("submit", function(event) {
 }, false)
 
 searchBar_2.addEventListener("submit", function(event) {
+  event.preventDefault()
   // when searching for another username, delete the results of the previous search
   while (tweets_2.firstChild) {
     tweets_2.removeChild(tweets_2.firstChild);
@@ -44,11 +46,13 @@ searchBar_2.addEventListener("submit", function(event) {
 
   const username_2 = input2.value
   const username_1 = username_1_hidden.innerHTML
+  username_2_hidden.innerHTML = username_2
 
   socket.emit("newSearch", username_1, username_2)
   // input2.value = ""
   return false
 }, false)
+
 // //
 // searchBar_2.addEventListener("submit", function(event) {
 //   event.preventDefault()
@@ -63,21 +67,40 @@ searchBar_2.addEventListener("submit", function(event) {
 //   return false
 // }, false)
 //
-socket.on("new_tweet", function(tweetObject) {
-  console.log("maintweetnew")
-  console.log(tweetObject)
+
+socket.on("conn_issue", function(json) {
   // if (tweetObject.connection_issue = "TooManyConnections") {
-  //   const errorDetail = tweetObject.detail
-  //   showError(errorDetail)
+  const errorDetail = json.detail
+  showError(errorDetail)
   // } else {
-  const username_tag = tweetObject.matching_rules[0].tag
-  const user = username_tag.charAt(5)
-  console.log(user)
-  addTweet(user, tweetObject)
   // }
   // const whichUser = checkUser(json)
   // addTweet_1(tweetObject)
 })
+
+socket.on("new_tweet", function(tweetObject) {
+  console.log("maintweetnew")
+  console.log(tweetObject)
+
+  const username_tag = tweetObject.matching_rules[0].tag
+  const user = username_tag.charAt(5)
+  console.log(user)
+  addTweet(user, tweetObject)
+
+  // }
+  // const whichUser = checkUser(json)
+  // addTweet_1(tweetObject)
+})
+
+socket.on("recent_search", function(search) {
+  console.log(search)
+  showSearches(search)
+  socket.emit("popular_searches")
+  // }
+  // const whichUser = checkUser(json)
+  // addTweet_1(tweetObject)
+})
+
 //
 // socket.on("new_followers_1", function(username_1, followers) {
 //   addFollower_1(followers)
@@ -89,7 +112,9 @@ function showError(errorDetail) {
   const li = document.createElement("li")
   li.innerHTML = errorDetail
   tweets_1.appendChild(li)
+  tweets_2.appendChild(li)
   window.scrollTo(0, tweets_1.scrollHeight)
+  window.scrollTo(0, tweets_2.scrollHeight)
 }
 
 function addTweet(user, tweetObject) {
@@ -101,8 +126,6 @@ function addTweet(user, tweetObject) {
   const username = username_1_tag.split(' ');
   // tweetObject.json.matching_rules[0].tag
   // const followers_1 = tweetObject.followers
-  `username_${user}_field`.innerHTML = username_display `username_${user}_hidden`.innerHTML = username[1]
-
   const li = document.createElement("li")
   li.innerHTML = `tweetText_${user}`
   `tweets_${user}`.appendChild(li)
@@ -110,6 +133,15 @@ function addTweet(user, tweetObject) {
   window.scrollTo(0, `tweets_${user}`.scrollHeight)
   // drawChart(username_1_display, "User 2", followers_1, "")
 }
+
+function showSearches(data) {
+  const li = document.createElement("li")
+  li.innerHTML = data
+  popular_searches.appendChild(li)
+  // window.scrollTo(tweet)
+  window.scrollTo(0, popular_searches.scrollHeight)
+}
+
 //
 // function addFollower_1(followers) {
 //   console.log(followers)
