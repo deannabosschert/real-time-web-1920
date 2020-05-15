@@ -311,6 +311,22 @@ align-self: center;}
 
 .footer { grid-area: footer; }
 
+.popular_searches {
+  display: inline-flex;
+  margin-left: 10vw;
+  max-width: 80vw;
+  margin-right: 10vw;
+  max-height: 100%;
+  overflow: scroll;
+}
+
+.popular_searches li {
+  font-variant: small-caps;
+  font-style: oblique;
+  display: inline-flex;
+  margin-left: 4px;
+  font-size: var(--fonth3);
+}
 
 /* show grid  */
 /* .grid-container * { */
