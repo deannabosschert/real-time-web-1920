@@ -26,6 +26,7 @@ searchBar_1.addEventListener("submit", function(event) {
   // when searching for another username, delete the results of the previous search
   while (tweets_1.firstChild) {
     tweets_1.removeChild(tweets_1.firstChild);
+    loadingState('active')
   }
   const username_1 = input1.value
   const username_2 = username_2_hidden.innerHTML
@@ -41,7 +42,7 @@ searchBar_2.addEventListener("submit", function(event) {
   event.preventDefault()
   // when searching for another username, delete the results of the previous search
   while (tweets_2.firstChild) {
-    tweets_2.removeChild(tweets_2.firstChild);
+    tweets_2.removeChild(tweets_2.firstChild)
   }
 
   const username_2 = input2.value
@@ -53,6 +54,14 @@ searchBar_2.addEventListener("submit", function(event) {
   return false
 }, false)
 
+function loadingState(state) {
+  const loader = document.querySelector('div.loader')
+  if (state === 'active') {
+    loader.classList.add('loading')
+  } else {
+    loader.classList.remove('loading')
+  }
+}
 // //
 // searchBar_2.addEventListener("submit", function(event) {
 //   event.preventDefault()
@@ -69,6 +78,7 @@ searchBar_2.addEventListener("submit", function(event) {
 //
 
 socket.on("conn_issue", function(json) {
+  loadingState('')
   // if (tweetObject.connection_issue = "TooManyConnections") {
   const errorDetail = json.detail
   showError(errorDetail)
@@ -79,6 +89,7 @@ socket.on("conn_issue", function(json) {
 })
 
 socket.on("new_tweet", function(tweetObject) {
+  loadingState('')
   console.log("maintweetnew")
   console.log(tweetObject)
 
@@ -109,15 +120,19 @@ socket.on("recent_search", function(search) {
 //
 
 function showError(errorDetail) {
+  loadingState('')
+  while (tweets_2.firstChild) {
+    tweets_2.removeChild(tweets_1.firstChild);
+  }
+  const errorMessage = `Error: ${errorDetail}`
   const li = document.createElement("li")
-  li.innerHTML = errorDetail
-  tweets_1.appendChild(li)
+  li.innerHTML = errorMessage
   tweets_2.appendChild(li)
-  window.scrollTo(0, tweets_1.scrollHeight)
   window.scrollTo(0, tweets_2.scrollHeight)
 }
 
 function addTweet(user, tweetObject) {
+  loadingState('')
   console.log(user)
   console.log(tweetObject)
   const tweetText = tweetObject.data.text
@@ -138,7 +153,6 @@ function showSearches(data) {
   const li = document.createElement("li")
   li.innerHTML = data
   popular_searches.appendChild(li)
-  // window.scrollTo(tweet)
   window.scrollTo(0, popular_searches.scrollHeight)
 }
 

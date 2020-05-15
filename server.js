@@ -57,7 +57,7 @@ io.on('connection', socket => {
   socket.on("popular_searches", function() {
     setTimeout(function() {
       getSearches()
-    }, 5000);
+    }, 8000);
 
   })
 
@@ -102,18 +102,17 @@ function setQuery(username_1, username_2) {
 function defineSearchLog(username_1, username_2) {
   if (username_1 == "User 1") {
     const search = {
-      "username_2": username_2
+      "username": username_2
     }
     return search
   } else if (username_2 == "User 2") {
     const search = {
-      "username_1": username_1
+      "username": username_1
     }
     return search
   } else {
     const search = {
-      "username_1": username_1,
-      "username_2": username_2
+      "username": `${username_1} & ${username_2}`
     }
     return search
   }
@@ -141,7 +140,6 @@ async function defineRules(state, rules) {
 
       // // Add rules to the stream. Comment this line if you want to keep your existing rules.
       await setRules(rules, token)
-      console.log("checkpoint1")
       console.log(token)
 
       openConnection(token)
@@ -336,7 +334,7 @@ async function sleep(delay) {
 async function addSearch(search) {
   const client = await MongoClient.connect(url, options)
   const db = client.db(dbName)
-  console.log("Connected correctly to server")
+  console.log("Connected correctly to server to store search")
   const item = await db.collection('twitter_searches').insertOne(search)
   console.log('big data at your service')
   client.close()
@@ -347,20 +345,14 @@ async function getSearches() {
   console.log('searches getten')
   const client = await MongoClient.connect(url, options)
   const db = client.db(dbName)
-  console.log("Connected correctly to server")
+  console.log("Connected correctly to server to retrieve search")
   const search = await db.collection('twitter_searches').aggregate([{
     $sample: {
       size: 1
     }
   }]).toArray()
   client.close()
-  console.log(search)
-  if (search[0].username_1) {
-    io.emit("recent_search", search[0].username_1)
-  } else if (search[0].username_2) {
-    io.emit("recent_search", search[0].username_2)
-  }
-
+  io.emit("recent_search", search[0].username)
 }
 
 http.listen(port, () => {
