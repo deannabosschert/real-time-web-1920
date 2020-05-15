@@ -134,33 +134,6 @@ async function defineRules(state, rules) {
   if (state == "start") {
     try {
       // Gets the complete list of rules currently applied to the stream
-      // currentRules = await getAllRules(token)
-
-      // // Delete all rules. Comment this line if you want to keep your existing rules.
-      // await deleteAllRules(currentRules, token)
-
-      // // Add rules to the stream. Comment this line if you want to keep your existing rules.
-      // await setRules(rules, token)
-      console.log("checkpoint1")
-      console.log(token)
-      console.log("kreeg ik een token?")
-
-      // openConnection(token)
-    } catch (e) {
-      console.error(e)
-      process.exit(-1)
-    }
-  } else if (state == "refresh") {
-    try {
-      // Gets the complete list of rules currently applied to the stream
-      currentRules = await getAllRules(token)
-    } catch (e) {
-      console.error(e)
-      process.exit(-1)
-    }
-  } else if (state == "update") {
-    try {
-      // Gets the complete list of rules currently applied to the stream
       currentRules = await getAllRules(token)
 
       // // Delete all rules. Comment this line if you want to keep your existing rules.
@@ -168,11 +141,30 @@ async function defineRules(state, rules) {
 
       // // Add rules to the stream. Comment this line if you want to keep your existing rules.
       await setRules(rules, token)
+      console.log("checkpoint1")
+      console.log(token)
+
+      openConnection(token)
     } catch (e) {
       console.error(e)
       process.exit(-1)
     }
   }
+} else if (state == "update") {
+  try {
+    // Gets the complete list of rules currently applied to the stream
+    currentRules = await getAllRules(token)
+
+    // // Delete all rules. Comment this line if you want to keep your existing rules.
+    await deleteAllRules(currentRules, token)
+
+    // // Add rules to the stream. Comment this line if you want to keep your existing rules.
+    await setRules(rules, token)
+  } catch (e) {
+    console.error(e)
+    process.exit(-1)
+  }
+}
 }
 
 async function bearerToken(auth) {
