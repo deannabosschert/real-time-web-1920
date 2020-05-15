@@ -149,22 +149,21 @@ async function defineRules(state, rules) {
       console.error(e)
       process.exit(-1)
     }
-  }
-} else if (state == "update") {
-  try {
-    // Gets the complete list of rules currently applied to the stream
-    currentRules = await getAllRules(token)
+  } else if (state == "update") {
+    try {
+      // Gets the complete list of rules currently applied to the stream
+      currentRules = await getAllRules(token)
 
-    // // Delete all rules. Comment this line if you want to keep your existing rules.
-    await deleteAllRules(currentRules, token)
+      // // Delete all rules. Comment this line if you want to keep your existing rules.
+      await deleteAllRules(currentRules, token)
 
-    // // Add rules to the stream. Comment this line if you want to keep your existing rules.
-    await setRules(rules, token)
-  } catch (e) {
-    console.error(e)
-    process.exit(-1)
+      // // Add rules to the stream. Comment this line if you want to keep your existing rules.
+      await setRules(rules, token)
+    } catch (e) {
+      console.error(e)
+      process.exit(-1)
+    }
   }
-}
 }
 
 async function bearerToken(auth) {
