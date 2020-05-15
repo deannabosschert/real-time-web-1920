@@ -263,7 +263,7 @@ function openConnection(token) {
   const connect = () => {
     try {
       stream = streamConnect(token)
-      followerGet = followerConnect(token)
+      // followerGet = followerConnect(token)
       stream.on('timeout', async () => {
         // Reconnect on error
         console.warn('A connection error occurred. Reconnecting…')
