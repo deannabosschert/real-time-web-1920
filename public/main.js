@@ -11,6 +11,7 @@ const username_1followers_count = 20;
 const username_2followers_count = 300;
 const username_1_hidden = document.querySelector(".username_1_hidden")
 const username_2_hidden = document.querySelector(".username_2_hidden")
+const popular_searches = document.querySelector(".popular_searches")
 username_1_hidden.innerHTML = "User 1"
 username_2_hidden.innerHTML = "User 2"
 
@@ -78,14 +79,9 @@ socket.on("conn_issue", function(json) {
 })
 
 socket.on("new_tweet", function(tweetObject) {
-  // `username_${user}_field`.innerHTML = username_display `username_${user}_hidden`.innerHTML = username[1]
-
   console.log("maintweetnew")
   console.log(tweetObject)
-  // if (tweetObject.connection_issue = "TooManyConnections") {
-  //   const errorDetail = tweetObject.detail
-  //   showError(errorDetail)
-  // } else {
+
   const username_tag = tweetObject.matching_rules[0].tag
   const user = username_tag.charAt(5)
   console.log(user)
@@ -95,6 +91,16 @@ socket.on("new_tweet", function(tweetObject) {
   // const whichUser = checkUser(json)
   // addTweet_1(tweetObject)
 })
+
+socket.on("recent_search", function(search) {
+  console.log(search)
+  showSearches(search)
+  socket.emit("popular_searches")
+  // }
+  // const whichUser = checkUser(json)
+  // addTweet_1(tweetObject)
+})
+
 //
 // socket.on("new_followers_1", function(username_1, followers) {
 //   addFollower_1(followers)
@@ -108,7 +114,7 @@ function showError(errorDetail) {
   tweets_1.appendChild(li)
   tweets_2.appendChild(li)
   window.scrollTo(0, tweets_1.scrollHeight)
-  window.scrollTo(0, tweets_1.scrollHeight)
+  window.scrollTo(0, tweets_2.scrollHeight)
 }
 
 function addTweet(user, tweetObject) {
@@ -127,6 +133,15 @@ function addTweet(user, tweetObject) {
   window.scrollTo(0, `tweets_${user}`.scrollHeight)
   // drawChart(username_1_display, "User 2", followers_1, "")
 }
+
+function showSearches(data) {
+  const li = document.createElement("li")
+  li.innerHTML = data
+  popular_searches.appendChild(li)
+  // window.scrollTo(tweet)
+  window.scrollTo(0, popular_searches.scrollHeight)
+}
+
 //
 // function addFollower_1(followers) {
 //   console.log(followers)
