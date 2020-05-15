@@ -162,7 +162,7 @@ Goal: Handle data sharing and multi-user support
 ### Rubric
 
 [Rubric- detailed rating of my project](https://github.com/deannabosschert/real-time-web-1920/wiki/Rubric)
-![screenshot of rubric](https://github.com/deannabosschert/real-time-web-1920/blob/master/src/img/documentation/rubric.png)
+![screenshot of rubric](https://github.com/deannabosschert/real-time-web-1920/blob/master/public/img/documentation/rubric.png)
 
 ## ℹ️ Resources
 
