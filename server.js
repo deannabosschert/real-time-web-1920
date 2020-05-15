@@ -30,8 +30,6 @@ const bearerTokenURL = new URL('https://api.twitter.com/oauth2/token')
 const streamURL = new URL('https://api.twitter.com/labs/1/tweets/stream/filter')
 const rulesURL = new URL('https://api.twitter.com/labs/1/tweets/stream/filter/rules')
 
-// const token = generateToken()
-
 app.use(express.static('./public'))
 app.set('view engine', 'ejs')
 app.set('views', './views')
@@ -42,7 +40,8 @@ app.get('/', function(req, res) {
 io.on('connection', socket => {
 
   socket.on("start", function() {
-    const rules = setQuery('alldaytechkech', 'alldayoptimism')
+    const rules = setQuery('alldaytechkech', 'gzendmast')
+    getSearches()
     defineRules("start", rules)
   })
 
@@ -51,15 +50,17 @@ io.on('connection', socket => {
     // stuur search naar mongodb database voor popular search-log
     const search = await defineSearchLog(username_1, username_2)
     defineRules("update", rules)
+    console.log(search)
     addSearch(search)
   })
 
-  socket.on('new_tweet', function(tweetObject) {
-    console.log('yeeeeeet')
-    // console.log(tweetObject)
-    // vgm wordt deze niet eens uitgevoerd maar gooi ik direct de emit naar client lol oeps
-    socket.broadcast.emit('new_tweet', tweetObject)
+  socket.on("popular_searches", function() {
+    setTimeout(function() {
+      getSearches()
+    }, 5000);
+
   })
+
 
   socket.on('disconnect', function() {
     console.log('user has left the building')
@@ -342,16 +343,34 @@ async function sleep(delay) {
 }
 
 async function addSearch(search) {
-  console.log(search)
   const client = await MongoClient.connect(url, options)
   const db = client.db(dbName)
   console.log("Connected correctly to server")
-  const item = await db.collection('chat_quote_list').insertOne(search)
+  const item = await db.collection('twitter_searches').insertOne(search)
   console.log('big data at your service')
   client.close()
   return
 }
 
+async function getSearches() {
+  console.log('searches getten')
+  const client = await MongoClient.connect(url, options)
+  const db = client.db(dbName)
+  console.log("Connected correctly to server")
+  const search = await db.collection('twitter_searches').aggregate([{
+    $sample: {
+      size: 1
+    }
+  }]).toArray()
+  client.close()
+  console.log(search)
+  if (search[0].username_1) {
+    io.emit("recent_search", search[0].username_1)
+  } else if (search[0].username_2) {
+    io.emit("recent_search", search[0].username_2)
+  }
+
+}
 
 http.listen(port, () => {
   console.log('App listening on: ' + port)
